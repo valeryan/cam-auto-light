@@ -1,0 +1,7 @@
+/usr/local/bin/camautolight/CamAutoLight
+/usr/local/bin/camautolight/CamAutoLight.dll
+/usr/local/bin/camautolight/CamAutoLight.deps.json
+/usr/local/bin/camautolight/CamAutoLight.runtimeconfig.json
+/usr/local/bin/camautolight/CamAutoLight.pdb
+/usr/local/bin/camautolight/DotNetEnv.dll
+/usr/local/bin/camautolight/Sprache.dll
