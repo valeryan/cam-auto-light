@@ -10,7 +10,6 @@ namespace CamAutoLight.Services;
 public class ElgatoLightService(IConfigManager configManager, ILogger<ElgatoLightService> logger)
     : IElgatoLightService
 {
-    private readonly ILogger<ElgatoLightService> _logger = logger;
     private readonly List<string> _ipAddresses = configManager.IpAddresses;
     private readonly int _brightness = configManager.Brightness;
     private readonly int _temperature = configManager.Temperature;
@@ -44,7 +43,7 @@ public class ElgatoLightService(IConfigManager configManager, ILogger<ElgatoLigh
         try
         {
             var response = client.PutAsync(url, content).Result;
-            _logger.LogInformation(
+            logger.LogInformation(
                 "[LIGHT] {ip} -> {state} | Response: {code}",
                 ip,
                 turnOn ? "ON" : "OFF",
@@ -53,7 +52,7 @@ public class ElgatoLightService(IConfigManager configManager, ILogger<ElgatoLigh
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "[ERROR] Failed to send request to {ip}", ip);
+            logger.LogError(ex, "[ERROR] Failed to send request to {ip}", ip);
         }
     }
 }
