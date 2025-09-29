@@ -6,11 +6,14 @@
     <string>com.camautolight</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/local/share/dotnet/dotnet</string>
-        <string>/usr/local/bin/camautolight/CamAutoLight.dll</string>
+        <string>/usr/local/bin/camautolight/CamAutoLight</string>
     </array>
     <key>WorkingDirectory</key>
     <string>/usr/local/bin/camautolight</string>
+    <key>StandardOutPath</key>
+    <string>/usr/local/bin/camautolight/camautolight.log</string>
+    <key>StandardErrorPath</key>
+    <string>/usr/local/bin/camautolight/camautolight.log</string>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>

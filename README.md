@@ -42,7 +42,7 @@ Automatically control Elgato Key Lights based on macOS camera usage.
    Run the setup script:
 
    ```sh
-   ./setup_autolight.sh
+   ./autolightctl.sh install
    ```
 
    This will:
@@ -66,14 +66,40 @@ Automatically control Elgato Key Lights based on macOS camera usage.
 - [`CamAutoLight/Services/CameraMonitorService.cs`](CamAutoLight/Services/CameraMonitorService.cs): Monitors camera state.
 - [`CamAutoLight/Services/ElgatoLightService.cs`](CamAutoLight/Services/ElgatoLightService.cs): Controls the lights.
 
+## Management
+
+Use the [`autolightctl.sh`](autolightctl.sh) script to manage the CamAutoLight service:
+
+```sh
+# Install/build and start the service
+./autolightctl.sh install
+
+# Restart the running service
+./autolightctl.sh restart
+
+# Check if the service is running
+./autolightctl.sh status
+
+# Show help and available commands
+./autolightctl.sh help
+
+# Completely remove the service
+./autolightctl.sh remove
+```
+
+**Available commands:**
+- `install` - Build, copy files, and load the service
+- `restart` - Restart the service
+- `remove` - Unload and remove the service
+- `status` - Show service status
+- `help` - Show help message
+
 ## Uninstall
 
 To remove the launch agent and application:
 
 ```sh
-launchctl unload ~/Library/LaunchAgents/com.camautolight.plist
-rm ~/Library/LaunchAgents/com.camautolight.plist
-sudo rm -rf /usr/local/bin/camautolight
+./autolightctl.sh remove
 ```
 
 ## License
