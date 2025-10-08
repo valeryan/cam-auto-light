@@ -7,12 +7,12 @@ using Microsoft.Extensions.Logging;
 
 namespace CamAutoLight.Services;
 
-public class CameraMonitorService(
+public class MacOSCameraMonitorService(
     IElgatoLightService elgatoLightService,
-    ILogger<CameraMonitorService> logger
+    ILogger<MacOSCameraMonitorService> logger
 ) : ICameraMonitorService
 {
-    private readonly ILogger<CameraMonitorService> _logger = logger;
+    private readonly ILogger<MacOSCameraMonitorService> _logger = logger;
     private readonly IElgatoLightService _elgatoLightService = elgatoLightService;
     private CancellationTokenSource? _cancellationTokenSource;
 
@@ -144,5 +144,11 @@ public class CameraMonitorService(
         string output = process.StandardOutput.ReadToEnd();
         process.WaitForExit();
         return output;
+    }
+
+    public void Dispose()
+    {
+        _cancellationTokenSource?.Cancel();
+        _cancellationTokenSource?.Dispose();
     }
 }
