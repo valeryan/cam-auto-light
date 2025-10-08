@@ -29,9 +29,11 @@ namespace CamAutoLight
                 }
 
                 // Default behavior: start auto monitoring
-                logger.LogInformation("Starting macOS camera event monitor...");
-                var cameraMonitorService =
-                    serviceProvider.GetRequiredService<ICameraMonitorService>();
+                logger.LogInformation("Starting camera event monitor...");
+                var cameraMonitorServiceFactory =
+                    serviceProvider.GetRequiredService<ICameraMonitorServiceFactory>();
+                var cameraMonitorService = cameraMonitorServiceFactory.CreateCameraMonitorService();
+
                 cameraMonitorService.CheckInitialCameraState();
                 cameraMonitorService.MonitorLogStream();
             }
@@ -107,7 +109,9 @@ namespace CamAutoLight
                 .AddLogging(config => config.AddConsole().SetMinimumLevel(LogLevel.Information))
                 .AddSingleton<IConfigManager, ConfigManager>()
                 .AddSingleton<IElgatoLightService, ElgatoLightService>()
-                .AddSingleton<ICameraMonitorService, CameraMonitorService>()
+                .AddSingleton<ICameraMonitorServiceFactory, CameraMonitorServiceFactory>()
+                .AddSingleton<MacOSCameraMonitorService>()
+                .AddSingleton<WindowsCameraMonitorService>()
                 .BuildServiceProvider();
         }
     }
