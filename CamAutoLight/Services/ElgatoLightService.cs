@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using CamAutoLight.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -29,6 +30,59 @@ public class ElgatoLightService(IConfigManager configManager, ILogger<ElgatoLigh
         {
             SendLightRequest(ip, 0, 0, false);
         }
+    }
+
+    public void ToggleLights()
+    {
+        // Check the first light's state to determine what to do
+        if (_ipAddresses.Count > 0)
+        {
+            bool isOn = GetLightState(_ipAddresses[0]);
+            if (isOn)
+            {
+                logger.LogInformation("Lights are ON, turning OFF");
+                TurnOffLights();
+            }
+            else
+            {
+                logger.LogInformation("Lights are OFF, turning ON");
+                TurnOnLights();
+            }
+        }
+    }
+
+    private bool GetLightState(string ip)
+    {
+        string url = $"http://{ip}:9123/elgato/lights";
+
+        try
+        {
+            var response = client.GetAsync(url).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonResponse = response.Content.ReadAsStringAsync().Result;
+                var jsonDoc = JsonDocument.Parse(jsonResponse);
+
+                if (
+                    jsonDoc.RootElement.TryGetProperty("lights", out var lightsArray)
+                    && lightsArray.GetArrayLength() > 0
+                )
+                {
+                    var firstLight = lightsArray[0];
+                    if (firstLight.TryGetProperty("on", out var onProperty))
+                    {
+                        return onProperty.GetInt32() == 1;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "[ERROR] Failed to get state from {ip}", ip);
+        }
+
+        // Default to OFF if we can't determine state
+        return false;
     }
 
     private void SendLightRequest(string ip, int brightness, int temperature, bool turnOn)

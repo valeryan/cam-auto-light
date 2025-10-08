@@ -16,7 +16,22 @@ public class ConfigManager(ILogger<ConfigManager> logger) : IConfigManager
 
     public void LoadConfig()
     {
-        Env.TraversePath().Load();
+        // Load .env from the same directory as the executable
+        var executableDir = System.IO.Path.GetDirectoryName(
+            System.Reflection.Assembly.GetExecutingAssembly().Location
+        );
+        var envPath = System.IO.Path.Combine(executableDir!, ".env");
+
+        if (System.IO.File.Exists(envPath))
+        {
+            Env.Load(envPath);
+            logger.LogInformation("Loaded .env from: {path}", envPath);
+        }
+        else
+        {
+            // Fallback to traversing from current directory
+            Env.TraversePath().Load();
+        }
 
         Brightness = Env.GetInt("brightness", -1);
         Temperature = Env.GetInt("temperature", -1);

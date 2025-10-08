@@ -4,5 +4,6 @@ namespace CamAutoLight.Interfaces
     {
         void TurnOnLights();
         void TurnOffLights();
+        void ToggleLights();
     }
 }

@@ -4,13 +4,16 @@ PLIST=~/Library/LaunchAgents/com.camautolight.plist
 BIN_DIR=/usr/local/bin/camautolight
 
 function help() {
-    echo "Usage: $0 [install|restart|remove|status|logs|help]"
+    echo "Usage: $0 [install|restart|remove|status|logs|on|off|toggle|help]"
     echo ""
     echo "  install   Build, copy files, and load the service"
     echo "  restart   Restart the service"
     echo "  remove    Unload and remove the service"
     echo "  status    Show service status"
     echo "  logs      Show recent log output"
+    echo "  on        Turn lights on manually"
+    echo "  off       Turn lights off manually"
+    echo "  toggle    Toggle lights on/off"
     echo "  help      Show this help message"
 }
 
@@ -61,12 +64,45 @@ function logs() {
     fi
 }
 
+function lights_on() {
+    if [ ! -f "$BIN_DIR/CamAutoLight" ]; then
+        echo "Error: CamAutoLight is not installed. Run './autolightctl.sh install' first."
+        exit 1
+    fi
+    echo "Turning lights on..."
+    # Use installed binary for fast execution
+    $BIN_DIR/CamAutoLight --on
+}
+
+function lights_off() {
+    if [ ! -f "$BIN_DIR/CamAutoLight" ]; then
+        echo "Error: CamAutoLight is not installed. Run './autolightctl.sh install' first."
+        exit 1
+    fi
+    echo "Turning lights off..."
+    # Use installed binary for fast execution
+    $BIN_DIR/CamAutoLight --off
+}
+
+function lights_toggle() {
+    if [ ! -f "$BIN_DIR/CamAutoLight" ]; then
+        echo "Error: CamAutoLight is not installed. Run './autolightctl.sh install' first."
+        exit 1
+    fi
+    echo "Toggling lights..."
+    # Use installed binary for fast execution
+    $BIN_DIR/CamAutoLight --toggle
+}
+
 case "$1" in
     install) install ;;
     restart) restart ;;
     remove) remove ;;
     status) status ;;
     logs) logs ;;
+    on) lights_on ;;
+    off) lights_off ;;
+    toggle) lights_toggle ;;
     help|"") help ;;
     *) echo "Unknown command: $1"; help; exit 1 ;;
 esac
