@@ -92,7 +92,36 @@ Use the [`autolightctl.sh`](autolightctl.sh) script to manage the CamAutoLight s
 - `restart` - Restart the service
 - `remove` - Unload and remove the service
 - `status` - Show service status
+- `install-route` - Install the VPN route fix (root LaunchDaemon)
+- `remove-route` - Remove the VPN route fix
 - `help` - Show help message
+
+## VPN route fix (ensure-iot-route)
+
+If the Key Lights live on a separate IoT subnet, a corporate VPN (e.g.
+GlobalProtect) can clobber the local route to them, making the lights
+unreachable until the route is restored. `ensure-iot-route.sh` fixes this: it
+runs as a root LaunchDaemon (`local.ensure-iot-route.plist`) every 60 seconds,
+re-adds the route if the VPN has removed it, and kickstarts the
+`com.camautolight` service so it reconnects.
+
+The subnet and gateway are configured at the top of the script:
+
+```sh
+IOT_NET="192.168.3.0/24"   # subnet the lights are on
+IOT_GW="192.168.4.1"       # gateway to reach it
+TEST_HOST="192.168.3.3"    # any host in the subnet, used to probe the route
+```
+
+Install/remove:
+
+```sh
+./autolightctl.sh install-route
+./autolightctl.sh remove-route
+```
+
+Daemon logs go to `/tmp/local.ensure-iot-route.stdout` / `.stderr`, and to the
+system log tagged `ensure-iot-route`.
 
 ## Uninstall
 
@@ -100,6 +129,12 @@ To remove the launch agent and application:
 
 ```sh
 ./autolightctl.sh remove
+```
+
+If the VPN route fix is installed, also run:
+
+```sh
+./autolightctl.sh remove-route
 ```
 
 ## License

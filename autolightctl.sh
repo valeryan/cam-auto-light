@@ -2,19 +2,23 @@
 
 PLIST=~/Library/LaunchAgents/com.camautolight.plist
 BIN_DIR=/usr/local/bin/camautolight
+ROUTE_SCRIPT=/usr/local/sbin/ensure-iot-route.sh
+ROUTE_PLIST=/Library/LaunchDaemons/local.ensure-iot-route.plist
 
 function help() {
-    echo "Usage: $0 [install|restart|remove|status|logs|on|off|toggle|help]"
+    echo "Usage: $0 [install|restart|remove|status|logs|on|off|toggle|install-route|remove-route|help]"
     echo ""
-    echo "  install   Build, copy files, and load the service"
-    echo "  restart   Restart the service"
-    echo "  remove    Unload and remove the service"
-    echo "  status    Show service status"
-    echo "  logs      Show recent log output"
-    echo "  on        Turn lights on manually"
-    echo "  off       Turn lights off manually"
-    echo "  toggle    Toggle lights on/off"
-    echo "  help      Show this help message"
+    echo "  install        Build, copy files, and load the service"
+    echo "  restart        Restart the service"
+    echo "  remove         Unload and remove the service"
+    echo "  status         Show service status"
+    echo "  logs           Show recent log output"
+    echo "  on             Turn lights on manually"
+    echo "  off            Turn lights off manually"
+    echo "  toggle         Toggle lights on/off"
+    echo "  install-route  Install the VPN route fix (root LaunchDaemon)"
+    echo "  remove-route   Remove the VPN route fix"
+    echo "  help           Show this help message"
 }
 
 function install() {
@@ -48,6 +52,25 @@ function remove() {
     launchctl unload $PLIST
     rm -f $PLIST
     sudo rm -rf $BIN_DIR
+    echo "Removed."
+}
+
+function install_route() {
+    echo "Installing VPN route fix (keeps the IoT subnet reachable while on VPN)..."
+    sudo cp ./ensure-iot-route.sh $ROUTE_SCRIPT
+    sudo chmod 755 $ROUTE_SCRIPT
+    sudo chown root:wheel $ROUTE_SCRIPT
+    sudo cp ./local.ensure-iot-route.plist $ROUTE_PLIST
+    sudo chown root:wheel $ROUTE_PLIST
+    sudo launchctl bootout system $ROUTE_PLIST 2>/dev/null
+    sudo launchctl bootstrap system $ROUTE_PLIST
+    echo "Installed. The route is re-checked every 60s; edit IOT_NET/IOT_GW in $ROUTE_SCRIPT if the light's subnet changes."
+}
+
+function remove_route() {
+    echo "Removing VPN route fix..."
+    sudo launchctl bootout system $ROUTE_PLIST 2>/dev/null
+    sudo rm -f $ROUTE_PLIST $ROUTE_SCRIPT
     echo "Removed."
 }
 
@@ -103,6 +126,8 @@ case "$1" in
     on) lights_on ;;
     off) lights_off ;;
     toggle) lights_toggle ;;
+    install-route) install_route ;;
+    remove-route) remove_route ;;
     help|"") help ;;
     *) echo "Unknown command: $1"; help; exit 1 ;;
 esac

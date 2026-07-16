@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>GroupName</key>
+	<string>wheel</string>
+	<key>InitGroups</key>
+	<true/>
+	<key>Label</key>
+	<string>local.ensure-iot-route</string>
+	<key>Program</key>
+	<string>/usr/local/sbin/ensure-iot-route.sh</string>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>StandardErrorPath</key>
+	<string>/tmp/local.ensure-iot-route.stderr</string>
+	<key>StandardOutPath</key>
+	<string>/tmp/local.ensure-iot-route.stdout</string>
+	<key>StartInterval</key>
+	<integer>60</integer>
+	<key>UserName</key>
+	<string>root</string>
+</dict>
+</plist>
