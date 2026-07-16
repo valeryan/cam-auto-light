@@ -57,6 +57,7 @@ function remove() {
 
 function install_route() {
     echo "Installing VPN route fix (keeps the IoT subnet reachable while on VPN)..."
+    sudo mkdir -p "$(dirname "$ROUTE_SCRIPT")"
     sudo cp ./ensure-iot-route.sh $ROUTE_SCRIPT
     sudo chmod 755 $ROUTE_SCRIPT
     sudo chown root:wheel $ROUTE_SCRIPT
